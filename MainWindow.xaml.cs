@@ -7,6 +7,7 @@
 namespace GridSandbox
 {
     using System;
+    using System.Linq;
     using System.Collections.Generic;
     using System.ComponentModel;
     using System.Diagnostics;
@@ -1081,14 +1082,19 @@ namespace GridSandbox
             // set instruction text -- naive set text, gets set EVERY function call
             string readText = File.ReadAllText("..\\..\\..\\" + "scoreboard.txt");
             string[] lines = File.ReadAllLines("..\\..\\..\\" + "scoreboard.txt");
-            List<int> scores = new List<int> { };
+            List<List<string>> scores = new List<List<string>> { };
             for (int p = 0; p < lines.Length; p++)
             {
-                scores.Add(Convert.ToInt32(lines[p]));
+                //scores.Add(Convert.ToInt32(lines[p]));
+                List<string> a = lines[p].Split().ToList();
+                scores.Add(a);
 
             }
-            scores.Sort();
-            setInstructionText("Steps:" + steps + "\r\n -fire all the ships\r\n -the less steps the better" +"\r\n\r\n Hint:"+ " \r\n -4 two-cell ships \r\n -2 four-cell ships \r\n -ships are not connected" +  "\r\n\r\n Scoreboard" + "\r\n 1st: " + scores[0].ToString() + "\r\n 2nd:" + scores[1].ToString() + "\r\n 3rd:" + scores[2].ToString(), System.Windows.Media.Brushes.Black, 32);
+
+            var sd= scores.ToArray();
+            List<List<string>> SortedList = sd.OrderBy(o => Convert.ToInt32(o[0])).ToList();
+            //scores.Sort();
+            setInstructionText("Steps:" + steps + "\r\n -fire all the ships\r\n -the less steps the better" +"\r\n\r\n Hint:"+ " \r\n -4 two-cell ships \r\n -2 four-cell ships \r\n -ships are not connected" +  "\r\n\r\n Scoreboard" + "\r\n 1st: " + SortedList[0][0]+" -- "+ SortedList[0][1] + "\r\n 2nd:" + SortedList[1][0] + " -- " + SortedList[1][1] + "\r\n 3rd:" + SortedList[2][0] + " -- " + SortedList[2][1], System.Windows.Media.Brushes.Black, 32);
 
             // set button text
 
@@ -1146,7 +1152,7 @@ namespace GridSandbox
                     setText("Player Wins! (Close Hand to Reset)", System.Windows.Media.Brushes.Green);
                     string score = steps.ToString();
                     string text = File.ReadAllText("..\\..\\..\\" + "scoreboard.txt");
-                    File.WriteAllText("..\\..\\..\\" + "scoreboard.txt", text + "\r\n" + score);
+                    File.WriteAllText("..\\..\\..\\" + "scoreboard.txt", text + "\r\n" + score+" "+ DateTime.Now.ToString("M/d/yyyy"));
 
                     isGameOver = true;
                     return;
