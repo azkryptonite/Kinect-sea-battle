@@ -1104,8 +1104,16 @@ namespace GridSandbox
             // set instruction text -- naive set text, gets set EVERY function call
             // Newline => \r\n (Windows Format)
             string readText = File.ReadAllText("..\\..\\..\\" + "scoreboard.txt");
-            setInstructionText("steps:" + steps + "\r\n"+readText+"  \r\n -four 1*2 ships \r\n -two 1*4 ships \r\n -ships are not connected" +
-            "\r\n -select a grid \r\n -close left hand to fire", System.Windows.Media.Brushes.Black, 48);
+            string[] lines = File.ReadAllLines("..\\..\\..\\" + "scoreboard.txt");
+            List<int> scores = new List<int> { };
+            for (int p=0; p<lines.Length; p++)
+            {
+                scores.Add(Convert.ToInt32(lines[p]));
+                
+            }
+            scores.Sort();
+            setInstructionText("steps:" + steps +"  \r\n -4 two-cell ships \r\n -2 four-cell ships \r\n -ships are not connected" +
+            "\r\n -select a grid to fire\r\n -the less steps the better"+"  \r\n\r\n Scoreboard"+"\r\n 1st:" + scores[0].ToString() + "\r\n 2nd:" + scores[1].ToString() + "\r\n 3rd:" + scores[2].ToString()  , System.Windows.Media.Brushes.Black, 36);
 
             // set button text
 
@@ -1215,7 +1223,8 @@ namespace GridSandbox
                 {
                     setText("P1 Wins! (Close Hand to Reset)", System.Windows.Media.Brushes.Green);
                     string score = steps.ToString();
-                    File.WriteAllText("..\\..\\..\\" + "scoreboard.txt", score);
+                    string text = File.ReadAllText("..\\..\\..\\" + "scoreboard.txt");
+                    File.WriteAllText("..\\..\\..\\" + "scoreboard.txt", text+"\r\n"+score);
 
                     isGameOver = true;
                     return;
