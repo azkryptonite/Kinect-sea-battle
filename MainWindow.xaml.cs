@@ -22,16 +22,19 @@ namespace GridSandbox
     /// <summary>
     /// Interaction logic for MainWindow
     /// </summary>
-    public partial class MainWindow : Window, INotifyPropertyChanged
+    public partial class MainWindow : Window,
+    INotifyPropertyChanged
     {
 
         //BEGIN: for EK131 Students -- feel free to change these variables
-        const int numGridRows = 7, numGridCols = 7;
+        const int numGridRows = 7,
+        numGridCols = 7;
         //END: for EK131
 
         // do not change the following variables
         bool useLeftHand = true;
-        const double gridHeight = 600, gridWidth = 600;
+        const double gridHeight = 600,
+        gridWidth = 600;
         Point playerOneHandLocation;
 
         /// <summary>
@@ -118,7 +121,8 @@ namespace GridSandbox
         /// <summary>
         /// definition of bones
         /// </summary>
-        private List<Tuple<JointType, JointType>> bones;
+        private List<Tuple<JointType,
+        JointType>> bones;
 
         /// <summary>
         /// Width of display (depth space)
@@ -156,8 +160,10 @@ namespace GridSandbox
         int[,] gridArray;
         Image[,] imgArray;
         Rectangle[,] rectArray;
-        bool isGameOver, waitingOnBot;
-        bool isPlayerOneHandClosed, hasPlayerOneHandOpened;
+        bool isGameOver,
+        waitingOnBot;
+        bool isPlayerOneHandClosed,
+        hasPlayerOneHandOpened;
 
         bool success;
         int failure;
@@ -188,7 +194,8 @@ namespace GridSandbox
             this.bodyFrameReader = this.kinectSensor.BodyFrameSource.OpenReader();
 
             // a bone defined as a line between two joints
-            this.bones = new List<Tuple<JointType, JointType>>();
+            this.bones = new List<Tuple<JointType,
+            JointType>>();
 
             // Torso
             this.bones.Add(new Tuple<JointType, JointType>(JointType.Head, JointType.Neck));
@@ -241,8 +248,7 @@ namespace GridSandbox
             this.kinectSensor.Open();
 
             // set the status text
-            this.StatusText = this.kinectSensor.IsAvailable ? Properties.Resources.RunningStatusText
-                                                            : Properties.Resources.NoSensorStatusText;
+            this.StatusText = this.kinectSensor.IsAvailable ? Properties.Resources.RunningStatusText : Properties.Resources.NoSensorStatusText;
 
             // Create the drawing group we'll use for drawing
             this.drawingGroup = new DrawingGroup();
@@ -258,7 +264,8 @@ namespace GridSandbox
 
             //dynamically add a grid      
 
-            uniGrid.Rows = numGridRows; uniGrid.Columns = numGridCols;
+            uniGrid.Rows = numGridRows;
+            uniGrid.Columns = numGridCols;
             //rows left->right
             rectArray = new Rectangle[numGridRows, numGridCols];
             imgArray = new Image[numGridRows, numGridCols];
@@ -290,13 +297,12 @@ namespace GridSandbox
             int delay = 30 * 8;
             zeroGridArray();
 
-
             WaterGotHit = System.Windows.Media.Brushes.Gray;
             ShipGotHit = System.Windows.Media.Brushes.Red;
             ShipDead = System.Windows.Media.Brushes.Black;
 
-
-            isPlayerOneHandClosed = false; hasPlayerOneHandOpened = false;
+            isPlayerOneHandClosed = false;
+            hasPlayerOneHandOpened = false;
 
             playerOneHandLocation = new Point();
 
@@ -445,10 +451,13 @@ namespace GridSandbox
 
                             this.DrawClippedEdges(body, dc);
 
-                            IReadOnlyDictionary<JointType, Joint> joints = body.Joints;
+                            IReadOnlyDictionary<JointType,
+                            Joint> joints = body.Joints;
 
                             // convert the joint points to depth (display) space
-                            Dictionary<JointType, Point> jointPoints = new Dictionary<JointType, Point>();
+                            Dictionary<JointType,
+                            Point> jointPoints = new Dictionary<JointType,
+                            Point>();
 
                             foreach (JointType jointType in joints.Keys)
                             {
@@ -513,9 +522,7 @@ namespace GridSandbox
 
                             //playerOneHandLocation
 
-
-                            double shoulderLengthScale = Math.Sqrt(Math.Pow(jointPoints[JointType.ShoulderLeft].X - jointPoints[JointType.ShoulderRight].X, 2)
-                                + Math.Pow(jointPoints[JointType.ShoulderLeft].Y - jointPoints[JointType.ShoulderRight].Y, 2));
+                            double shoulderLengthScale = Math.Sqrt(Math.Pow(jointPoints[JointType.ShoulderLeft].X - jointPoints[JointType.ShoulderRight].X, 2) + Math.Pow(jointPoints[JointType.ShoulderLeft].Y - jointPoints[JointType.ShoulderRight].Y, 2));
 
                             //region is intended to scale hand values from 0-1, we have this region to the LEFT of the user
                             // which is scaled to the length of the left shoulder - to - right shoulder 
@@ -524,20 +531,14 @@ namespace GridSandbox
 
                             if (useLeftHand)
                             {
-                                handRegion = new Rect(jointPoints[JointType.ShoulderLeft].X - (1.3 * shoulderLengthScale),
-                                jointPoints[JointType.ShoulderLeft].Y - (1.0 * shoulderLengthScale),
-                                2 * shoulderLengthScale,
-                                2 * shoulderLengthScale);
+                                handRegion = new Rect(jointPoints[JointType.ShoulderLeft].X - (1.3 * shoulderLengthScale), jointPoints[JointType.ShoulderLeft].Y - (1.0 * shoulderLengthScale), 2 * shoulderLengthScale, 2 * shoulderLengthScale);
                                 playerOneHandLocation.X = (jointPoints[JointType.HandLeft].X - handRegion.X) / (handRegion.Width) * 600;
                                 playerOneHandLocation.Y = (jointPoints[JointType.HandLeft].Y - handRegion.Y) / (handRegion.Height) * 600;
                             }
                             else
                             {
                                 //using right hand
-                                handRegion = new Rect(jointPoints[JointType.ShoulderRight].X - (.7 * shoulderLengthScale),
-                                jointPoints[JointType.ShoulderRight].Y - (1.0 * shoulderLengthScale),
-                                2 * shoulderLengthScale,
-                                2 * shoulderLengthScale);
+                                handRegion = new Rect(jointPoints[JointType.ShoulderRight].X - (.7 * shoulderLengthScale), jointPoints[JointType.ShoulderRight].Y - (1.0 * shoulderLengthScale), 2 * shoulderLengthScale, 2 * shoulderLengthScale);
                                 playerOneHandLocation.X = (jointPoints[JointType.HandRight].X - handRegion.X) / (handRegion.Width) * 600;
                                 playerOneHandLocation.Y = (jointPoints[JointType.HandRight].Y - handRegion.Y) / (handRegion.Height) * 600;
                             }
@@ -610,8 +611,7 @@ namespace GridSandbox
             Joint joint1 = joints[jointType1];
 
             // If we can't find either of these joints, exit
-            if (joint0.TrackingState == TrackingState.NotTracked ||
-                joint1.TrackingState == TrackingState.NotTracked)
+            if (joint0.TrackingState == TrackingState.NotTracked || joint1.TrackingState == TrackingState.NotTracked)
             {
                 return;
             }
@@ -662,33 +662,25 @@ namespace GridSandbox
             if (clippedEdges.HasFlag(FrameEdges.Bottom))
             {
                 drawingContext.DrawRectangle(
-                    Brushes.Red,
-                    null,
-                    new Rect(0, this.displayHeight - ClipBoundsThickness, this.displayWidth, ClipBoundsThickness));
+                Brushes.Red, null, new Rect(0, this.displayHeight - ClipBoundsThickness, this.displayWidth, ClipBoundsThickness));
             }
 
             if (clippedEdges.HasFlag(FrameEdges.Top))
             {
                 drawingContext.DrawRectangle(
-                    Brushes.Red,
-                    null,
-                    new Rect(0, 0, this.displayWidth, ClipBoundsThickness));
+                Brushes.Red, null, new Rect(0, 0, this.displayWidth, ClipBoundsThickness));
             }
 
             if (clippedEdges.HasFlag(FrameEdges.Left))
             {
                 drawingContext.DrawRectangle(
-                    Brushes.Red,
-                    null,
-                    new Rect(0, 0, ClipBoundsThickness, this.displayHeight));
+                Brushes.Red, null, new Rect(0, 0, ClipBoundsThickness, this.displayHeight));
             }
 
             if (clippedEdges.HasFlag(FrameEdges.Right))
             {
                 drawingContext.DrawRectangle(
-                    Brushes.Red,
-                    null,
-                    new Rect(this.displayWidth - ClipBoundsThickness, 0, ClipBoundsThickness, this.displayHeight));
+                Brushes.Red, null, new Rect(this.displayWidth - ClipBoundsThickness, 0, ClipBoundsThickness, this.displayHeight));
             }
         }
 
@@ -700,8 +692,7 @@ namespace GridSandbox
         private void Sensor_IsAvailableChanged(object sender, IsAvailableChangedEventArgs e)
         {
             // on failure, set the status text
-            this.StatusText = this.kinectSensor.IsAvailable ? Properties.Resources.RunningStatusText
-                                                            : Properties.Resources.SensorNotAvailableStatusText;
+            this.StatusText = this.kinectSensor.IsAvailable ? Properties.Resources.RunningStatusText : Properties.Resources.SensorNotAvailableStatusText;
         }
 
         ///////////////////////////
@@ -728,12 +719,10 @@ namespace GridSandbox
             InvalidateVisual();
         }
 
-
         // reset all grid square colors to white
         void clearBoard()
         {
             steps = 0;
-            //int[,] gridArray = { { 1, 1, 1, 0, 0, 0, 0 }, { 0, 0, 0, 0, 1, 1, 0 }, { 0, 0, 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0, 1, 0 }, { 0, 0, 0, 0, 0, 1, 0 }, { 0, 0, 0, 0, 0, 1, 0 } };
             for (int rr = 0; rr < numGridRows; rr++)
             {
                 for (int cc = 0; cc < numGridCols; cc++)
@@ -758,7 +747,11 @@ namespace GridSandbox
         // System.Windows.Media.Brushes.White
         // System.Windows.Media.Brushes.Green
         // System.Windows.Media.Brushes.Red
-        void setText(string text, System.Windows.Media.Brush brush) { textHere.Text = text; textHere.Foreground = brush; }
+        void setText(string text, System.Windows.Media.Brush brush)
+        {
+            textHere.Text = text;
+            textHere.Foreground = brush;
+        }
 
         // update the instructions to the right side of the grid to a given string, color, and size.
         void setInstructionText(string text, System.Windows.Media.Brush brush, double fontSize)
@@ -799,23 +792,93 @@ namespace GridSandbox
         {
             if (row < 0 || col < 0) return;
             if (playerNumber == -3)
-                //rectArray[row, col].Fill = WaterGotHit;
                 draw_image(row, col, "x.png");
-            if (playerNumber == -1)
-                rectArray[row, col].Fill = ShipGotHit;
-            if (playerNumber == -2)
-                rectArray[row, col].Fill = ShipDead;
+            if (playerNumber == -1) rectArray[row, col].Fill = ShipGotHit;
+            if (playerNumber == -2) rectArray[row, col].Fill = ShipDead;
             InvalidateVisual(); // render layout again
         }
 
-        // reset Grid Array to zero
-        // this function is called upon for grid initialization
+      
 
+        // sets a player’s color to a given brush color (accepted player numbers are 1 and 2).
+        void setPlayerColor(int playerNumber, System.Windows.Media.Brush brush)
+        {
+            if (playerNumber == 1) WaterGotHit = brush;
+        }
+
+        // If true, the given’s player hand is detected as closed
+        // if false, it is detected as not closed (open).
+        bool isPlayerHandClosed(int playerNumber)
+        {
+            if (playerNumber == 1) return isPlayerOneHandClosed;
+            return false;
+        }
+
+        // returns a normalized point (0 to 1) of either player one hand's location or player two's
+        // cannot return null point, so use with care
+        // Note: values can be returned outside this range if the hand has left the region!
+        Point getPlayerHandLocation(int playerNumber)
+        {
+            if (playerNumber == 1)
+            {
+                return new Point(playerOneHandLocation.X / gridWidth, playerOneHandLocation.Y / gridHeight);
+            }
+            else
+            {
+                return new Point(playerOneHandLocation.X / gridWidth, playerOneHandLocation.Y / gridHeight);
+            }
+        }
+
+        // if the player’s hand is at the specified location, the function returns true, otherwise, false. 
+        // note: this function doesn't tell WHICH location the playerHand is in
+        // so it is necessary for the players to check EACH location and perform logic
+        bool isPlayerHandInGridLocation(int row, int col, int playerNumber)
+        {
+            if (row < 0 || col < 0) return false;
+
+            //resolution of drawing region is 600x600 -- we segment each region into parts
+            //gridHeight, gridWidth
+
+            double xLowerBound = col * (gridWidth / numGridCols),
+            xUpperBound = (col + 1) * (gridWidth / numGridCols),
+            yLowerBound = row * (gridHeight / numGridRows),
+            yUpperBound = (row + 1) * (gridHeight / numGridRows);
+
+            Point HandLocation;
+
+            if (playerNumber == 1) HandLocation = playerOneHandLocation;
+            else HandLocation = playerOneHandLocation;
+
+            if (HandLocation.X >= xLowerBound && HandLocation.X < xUpperBound && HandLocation.Y >= yLowerBound && HandLocation.Y < yUpperBound)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        /////////////////////////////////////
+        // Functions for Students to Change//
+        /////////////////////////////////////
+
+        
+        // clears and resets the game state
+        void resetGame()
+        {
+            // reset game
+            waitingOnBot = false;
+            isGameOver = false;
+            clearBoard();
+            zeroGridArray();
+
+        }
+
+        //generate a random ship if not occupied
         void generateShipSocations(int length)
         {
             Random rnd = new Random();
             success = false;
-            exist=false;
+            exist = false;
             int direction = rnd.Next(1, 3);
             if (direction == 1)
             {
@@ -824,7 +887,7 @@ namespace GridSandbox
                 bool occupied = false;
                 exist = false;
                 for (int x = -1; x < 2; x++)
-                    {
+                {
                     if (length == 4 && (cc == 2 || cc == 3 || cc == 4))
                     {
                         occupied = true;
@@ -835,16 +898,15 @@ namespace GridSandbox
 
                         try
                         {
-                            gridArray[rr + i, cc+x] = gridArray[rr + i, cc+x];
+                            gridArray[rr + i, cc + x] = gridArray[rr + i, cc + x];
                             exist = true;
                         }
                         catch (Exception e)
                         {
-                            //Console.WriteLine("{0} Exception caught.", e);
                         }
                         if (exist == true)
                         {
-                            if (gridArray[rr + i, cc+x] == 1)
+                            if (gridArray[rr + i, cc + x] == 1)
                             {
                                 occupied = true;
                             }
@@ -854,7 +916,6 @@ namespace GridSandbox
                     }
                 }
 
-                
                 if (!occupied)
                 {
                     for (int i = 0; i < length; i++)
@@ -887,7 +948,6 @@ namespace GridSandbox
                         }
                         catch (Exception e)
                         {
-                            //Console.WriteLine("{0} Exception caught.", e);
                         }
                         if (exist == true)
                         {
@@ -911,8 +971,9 @@ namespace GridSandbox
                 }
             }
 
-
         }
+
+        //generate 2 4cells ship first and then generate 4 2cells ships, regenerate if too many failures
         void zeroGridArray()
         {
             failure = 0;
@@ -944,151 +1005,66 @@ namespace GridSandbox
                 if (success)
                 {
                     counter++;
-                    
+
                 }
                 else
                 {
                     failure++;
                 }
-                if (failure>70000)
+                if (failure > 70000)
                 {
-                    System.Console.WriteLine(failure);
                     zeroGridArray();
                     return;
 
                 }
-                
-            }
-            
 
-
-        }
-
-        // sets a player’s color to a given brush color (accepted player numbers are 1 and 2).
-        void setPlayerColor(int playerNumber, System.Windows.Media.Brush brush)
-        {
-            if (playerNumber == 1)
-                WaterGotHit = brush;
-        }
-
-
-        // If true, the given’s player hand is detected as closed
-        // if false, it is detected as not closed (open).
-        bool isPlayerHandClosed(int playerNumber)
-        {
-            if (playerNumber == 1)
-                return isPlayerOneHandClosed;
-            return false;
-        }
-
-        // returns a normalized point (0 to 1) of either player one hand's location or player two's
-        // cannot return null point, so use with care
-        // Note: values can be returned outside this range if the hand has left the region!
-        Point getPlayerHandLocation(int playerNumber)
-        {
-            if (playerNumber == 1)
-            {
-                return new Point(playerOneHandLocation.X / gridWidth, playerOneHandLocation.Y / gridHeight);
-            }
-            else
-            {
-                return new Point(playerOneHandLocation.X / gridWidth, playerOneHandLocation.Y / gridHeight);
-            }
-        }
-
-        // if the player’s hand is at the specified location, the function returns true, otherwise, false. 
-        // note: this function doesn't tell WHICH location the playerHand is in
-        // so it is necessary for the players to check EACH location and perform logic
-        bool isPlayerHandInGridLocation(int row, int col, int playerNumber)
-        {
-            if (row < 0 || col < 0) return false;
-
-            //resolution of drawing region is 600x600 -- we segment each region into parts
-            //gridHeight, gridWidth
-
-            double xLowerBound = col * (gridWidth / numGridCols), xUpperBound = (col + 1) * (gridWidth / numGridCols),
-                yLowerBound = row * (gridHeight / numGridRows), yUpperBound = (row + 1) * (gridHeight / numGridRows);
-
-            Point HandLocation;
-
-            if (playerNumber == 1) HandLocation = playerOneHandLocation;
-            else HandLocation = playerOneHandLocation;
-
-            if (HandLocation.X >= xLowerBound && HandLocation.X < xUpperBound &&
-                HandLocation.Y >= yLowerBound && HandLocation.Y < yUpperBound)
-            {
-                return true;
             }
 
-            return false;
         }
 
-        /////////////////////////////////////
-        // Functions for Students to Change//
-        /////////////////////////////////////
-
-
-        // used in tic tac toe and returns 0 no winner, returns 1 or 2 if that player has won respectively
-        // this only works for a 3x3 game of tic tac toe.
+        //check winning condition
         int checkWinner()
-        {
-            //assuming gridArray is 3 x 3
 
-            //check diagonals
+        {
+
+            //check if there is ships left
+
             if (gridArray[0, 0] <= 0 && gridArray[0, 1] <= 0 && gridArray[0, 2] <= 0 && gridArray[0, 3] <= 0 && gridArray[0, 4] <= 0 && gridArray[0, 5] <= 0 && gridArray[0, 6] <= 0 &&
+
                 gridArray[1, 0] <= 0 && gridArray[1, 1] <= 0 && gridArray[1, 2] <= 0 && gridArray[1, 3] <= 0 && gridArray[1, 4] <= 0 && gridArray[1, 5] <= 0 && gridArray[1, 6] <= 0 &&
+
                 gridArray[2, 0] <= 0 && gridArray[2, 1] <= 0 && gridArray[2, 2] <= 0 && gridArray[2, 3] <= 0 && gridArray[2, 4] <= 0 && gridArray[2, 5] <= 0 && gridArray[2, 6] <= 0 &&
+
                 gridArray[3, 0] <= 0 && gridArray[3, 1] <= 0 && gridArray[3, 2] <= 0 && gridArray[3, 3] <= 0 && gridArray[3, 4] <= 0 && gridArray[3, 5] <= 0 && gridArray[3, 6] <= 0 &&
+
                 gridArray[4, 0] <= 0 && gridArray[4, 1] <= 0 && gridArray[4, 2] <= 0 && gridArray[4, 3] <= 0 && gridArray[4, 4] <= 0 && gridArray[4, 5] <= 0 && gridArray[4, 6] <= 0 &&
+
                 gridArray[5, 0] <= 0 && gridArray[5, 1] <= 0 && gridArray[5, 2] <= 0 && gridArray[5, 3] <= 0 && gridArray[5, 4] <= 0 && gridArray[5, 5] <= 0 && gridArray[5, 6] <= 0 &&
+
                 gridArray[6, 0] <= 0 && gridArray[6, 1] <= 0 && gridArray[6, 2] <= 0 && gridArray[6, 3] <= 0 && gridArray[6, 4] <= 0 && gridArray[6, 5] <= 0 && gridArray[6, 6] <= 0
+
                 )
+
             {
+
                 return 1;
+
             }
+
+
+
+
 
 
 
             return 0;
-        }
 
-
-        // clears and resets the game state
-        void resetGame()
-        {
-            // reset game
-            waitingOnBot = false;
-            isGameOver = false;
-            clearBoard();
-            zeroGridArray();
-
-        }
-
-        // our simple computer AI plays by filling in squares from top to bottom
-        void setShips()
-        {
-            /*for (int rr = 0; rr < numGridRows; rr++)
-            {
-                for (int cc = 0; cc < numGridCols; cc++)
-                {
-                    //fills in first empty spot in grid
-                    if (gridArray[rr, cc] == 0)
-                    {
-                        gridArray[rr, cc] = 2;
-                        highlightGridLocation(rr, cc, 2);
-                        return;
-                    }
-                }
-            }*/
-
-            // if a bot has reached here the game is a TIE
-            isGameOver = true;
-            setText("TIE Game! (Close Hand to Reset)", System.Windows.Media.Brushes.Black);
         }
 
         // Student generated code should be in this location. Currently, the game is tic tac toe.
         void studentWork()
         {
+            //text function for the 7*7matrix
             //Console.WriteLine("start");
             //foreach (var item in gridArray)
             //{
@@ -1099,74 +1075,26 @@ namespace GridSandbox
             bool playerMoved = false;
 
             // rowHit and colHit are variables that are set to whatever row/col the player closes their hand in (You will see later on)
-            int rowHit = -1, colHit = -1;
+            int rowHit = -1,
+            colHit = -1;
 
             // set instruction text -- naive set text, gets set EVERY function call
-            // Newline => \r\n (Windows Format)
             string readText = File.ReadAllText("..\\..\\..\\" + "scoreboard.txt");
             string[] lines = File.ReadAllLines("..\\..\\..\\" + "scoreboard.txt");
             List<int> scores = new List<int> { };
-            for (int p=0; p<lines.Length; p++)
+            for (int p = 0; p < lines.Length; p++)
             {
                 scores.Add(Convert.ToInt32(lines[p]));
-                
+
             }
             scores.Sort();
-            setInstructionText("steps:" + steps +"  \r\n -4 two-cell ships \r\n -2 four-cell ships \r\n -ships are not connected" +
-            "\r\n -select a grid to fire\r\n -the less steps the better"+"  \r\n\r\n Scoreboard"+"\r\n 1st:" + scores[0].ToString() + "\r\n 2nd:" + scores[1].ToString() + "\r\n 3rd:" + scores[2].ToString()  , System.Windows.Media.Brushes.Black, 36);
+            setInstructionText("Steps:" + steps + "\r\n -fire all the ships\r\n -the less steps the better" +"\r\n\r\n Hint:"+ " \r\n -4 two-cell ships \r\n -2 four-cell ships \r\n -ships are not connected" +  "\r\n\r\n Scoreboard" + "\r\n 1st: " + scores[0].ToString() + "\r\n 2nd:" + scores[1].ToString() + "\r\n 3rd:" + scores[2].ToString(), System.Windows.Media.Brushes.Black, 32);
 
             // set button text
 
             setButtonText("New Game", 1);
 
-            // We use the gridArray as follows: 0 means the spot is BLANK, 1 means OCCUPIED by player 1, 2 means OCCUPIED by player 2
-            // for the purposes of this bot (Computer AI), the user is always player 1
-
-            // BOT MOVE
-
-            // delayFrames can be set to a certain number in order to "stall" the program
-            // REMEMBER: Camera operates at 30 frames per second. That means, if delayFrames == 90 then the program waits 3 seconds until it moves to the "else if" statement
-            if (delayFrames > 0)
-            {
-                // Post-decrement delayFrames
-                delayFrames--;
-
-                // Return stops all execution of the StudentWork function
-                // In the scope of this Kinect program, that means
-                // that the program will then capture another frame and then start from the beginning of this function again. 
-                // BE CAREFUL WHEN YOU USE RETURNS
-                return;
-            }
-            else if (delayFrames == 0)
-            {
-                // delay is over
-                // Put what you want to execute AFTER the delay WITHIN this section
-
-                // Post - decrement delayFrames
-                delayFrames--;
-
-                // Function that has the Bot make a move
-                // You can edit the botMove function to make it more smarterer
-
-                // Checks if game is finished (ie. 3 in a row)
-                if (isGameOver)
-                    // Exit the function, this stops the program from continuing to check for winners because obviously the winner has already been found
-                    return;
-
-                // checkWinner() returns 1 or 2 if there is a winner or 0 if there is no winner. 
-                if (checkWinner() == 2 && false) //Winner is player 2
-                {
-                    setText("BOT Wins! (Close Hand to Reset)", System.Windows.Media.Brushes.Red); //Changes the text on the screen
-                    isGameOver = true; // Changes this global variable so that the game ends
-                    return; // Exits the function
-                }
-
-                // Bot has moved, it's the players' turn
-                waitingOnBot = false;
-
-                // Exit the function
-                return;
-            }
+            
 
             // GAME RESET LOGIC
 
@@ -1187,8 +1115,7 @@ namespace GridSandbox
                 for (int cc = 0; cc < numGridCols; cc++) //For each row, indexes through the column (Nested FOR loop)
                 {
                     // if the triggered location is already filled ignore it
-                    if (gridArray[rr, cc] != 2 && isPlayerHandInGridLocation(rr, cc, 1) &&
-                        isPlayerHandClosed(1)) //Hand is closed within the given row and column
+                    if (gridArray[rr, cc] != 2 && isPlayerHandInGridLocation(rr, cc, 1) && isPlayerHandClosed(1)) //Hand is closed within the given row and column
                     {
                         rowHit = rr; // Record row
                         colHit = cc; // Record column
@@ -1201,8 +1128,6 @@ namespace GridSandbox
 
             if (playerMoved && !waitingOnBot)
             {
-                // process PlayerOne move
-
                 if (gridArray[rowHit, colHit] == 0)
                 {
                     steps += 1;
@@ -1215,25 +1140,16 @@ namespace GridSandbox
                     gridArray[rowHit, colHit] = -1;
                     highlightGridLocation(rowHit, colHit, -1);
                 }
-                //gridArray[rowHit, colHit] = 1; // Internal grid (or "Board) is set to 1 at player hand location
-                //highlightGridLocation(rowHit, colHit, 1); 
 
-                // Same logic as when checking if the Bot won
                 if (checkWinner() == 1)
                 {
-                    setText("P1 Wins! (Close Hand to Reset)", System.Windows.Media.Brushes.Green);
+                    setText("Player Wins! (Close Hand to Reset)", System.Windows.Media.Brushes.Green);
                     string score = steps.ToString();
                     string text = File.ReadAllText("..\\..\\..\\" + "scoreboard.txt");
-                    File.WriteAllText("..\\..\\..\\" + "scoreboard.txt", text+"\r\n"+score);
+                    File.WriteAllText("..\\..\\..\\" + "scoreboard.txt", text + "\r\n" + score);
 
                     isGameOver = true;
                     return;
-                }
-                else
-                {
-                    // Sets delay to 15 which means the Bot will not make a move until 15 frames or 0.5 seconds
-                    delayFrames = 15; //wait 15 event calls
-                    waitingOnBot = true;
                 }
 
             }
@@ -1247,7 +1163,6 @@ namespace GridSandbox
             setText("Sea battle (Use Left Hand)", System.Windows.Media.Brushes.Black);
             return;
         }
-
 
         // optional: add functionality
         private void Button2_Click(object sender, RoutedEventArgs e)
