@@ -794,7 +794,10 @@ namespace GridSandbox
             if (row < 0 || col < 0) return;
             if (playerNumber == -3)
                 draw_image(row, col, "x.png");
-            if (playerNumber == -1) rectArray[row, col].Fill = ShipGotHit;
+            if (playerNumber == -1)
+            {   rectArray[row, col].Fill = ShipGotHit;
+                //draw_image(row, col, "ship.png");
+            }
             if (playerNumber == -2) rectArray[row, col].Fill = ShipDead;
             InvalidateVisual(); // render layout again
         }
