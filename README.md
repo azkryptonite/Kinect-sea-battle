@@ -1,2 +1,2 @@
 # Kinect-sea-battle
-ek131
+Sea battle game for Microsoft Kinect written in C#
